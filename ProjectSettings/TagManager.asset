@@ -10,6 +10,7 @@ TagManager:
   - Bomb
   - Orange
   - GameManger
+  - Ground
   layers:
   - Default
   - TransparentFX

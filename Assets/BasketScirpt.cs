@@ -6,34 +6,44 @@ using UnityEngine;
 public class BasketScirpt : MonoBehaviour
 {
     Vector2 inputPos;
-    [SerializeField]GameManger gameManger;
+    //[SerializeField]GameManger gameManger;
     [SerializeField] private float raduis;
+    [SerializeField] private Vector3 offset;
+    [SerializeField] private AudioSource sfx;
     void Start()
     {
         Controls input = new Controls();
         input.Enable();
         input.Gameplay.inputPosition.performed += i => inputPos = i.ReadValue<Vector2>();
-        gameManger = GameManger.Instance;
+        //gameManger = GameManger.Instance;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (GameManger.Instance.playerTries < 1)
+            return;
         Vector2 mouseToCamera = Camera.main.ScreenToWorldPoint(inputPos);
         transform.position = new Vector3(mouseToCamera.x,transform.position.y ,0 );
-        transform.position = new Vector3(Mathf.Clamp(transform.position.x, -3.38f, 2.33f), transform.position.y);
-        Collider2D hitInfo = Physics2D.OverlapCircle(transform.position, raduis);
+        transform.position = new Vector3(Mathf.Clamp(transform.position.x, -7.39f, 5.26f), transform.position.y);
+        Collider2D hitInfo = Physics2D.OverlapCircle(transform.position + offset, raduis);
         if (hitInfo != null)
         {
-            if(hitInfo.CompareTag(gameManger.CurrentTag))
+            if(hitInfo.CompareTag(GameManger.Instance.CurrentTag))
             {
                 Destroy(hitInfo.gameObject);
-                gameManger.score += 100;
+                sfx.Play();
+                GameManger.Instance.score += 10;
+            }
+            else if (!hitInfo.CompareTag(GameManger.Instance.CurrentTag) && !hitInfo.CompareTag("Ground") && !hitInfo.CompareTag("Player"))
+            {
+                GameManger.Instance.playerTries--;
+                Destroy(hitInfo.gameObject);
             }
         }
     }
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireSphere(transform.position, raduis);
+        Gizmos.DrawWireSphere(transform.position + offset, raduis);
     }
 }

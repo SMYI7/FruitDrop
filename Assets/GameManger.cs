@@ -1,9 +1,12 @@
 using JetBrains.Annotations;
+using RTLTMPro;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManger : MonoBehaviour
 {
@@ -15,42 +18,58 @@ public class GameManger : MonoBehaviour
     public static GameManger Instance;
     [SerializeField] private Transform minRandomzier;
     [SerializeField] private Transform maxRandomzier;
+    [SerializeField] private RTLTextMeshPro scoreText;
+    [SerializeField] private RTLTextMeshPro finalScore;
+    [SerializeField] private RTLTextMeshPro triesText;
+    [SerializeField] private GameObject lostCanva;
     [SerializeField] private float delay;
+    public float playerTries;
     [SerializeField]private float currentTimer;
+    
     void Start()
     {
-       StartCoroutine(ChangeTag());
+        Time.timeScale = 1f;
+        StartCoroutine(ChangeTag());
         Instance = this;
         currentTimer = delay;
         StartCoroutine(SpawnFruit());
-        CurrentTag = tags[Random.Range(0, tags.Length - 1)];
+        int random = Random.Range(0, tags.Length - 1);
+        CurrentTag = tags[random];
         for (int j = 0; j < tags.Length; j++)
         {
-            UIfruits[j] = GameObject.FindGameObjectWithTag(tags[j]);
+            UIfruits[j].GetComponent<SpriteRenderer>().enabled = false;
         }
+        UIfruits[random].GetComponent<SpriteRenderer>().enabled = true;
+        
+        playerTries = 5;
     }
 
     // Update is called once per frame
     void Update()
     {
+        triesText.text = playerTries.ToString();
+        scoreText.text = score.ToString();
+        finalScore.text = score.ToString();
         currentTimer -= Time.deltaTime;
-        float xRandomize = Random.Range(minRandomzier.position.x, maxRandomzier.position.x);
-        float yRandomize = Random.Range(minRandomzier.position.y, maxRandomzier.position.y);
-        Vector2 randomizer = new Vector2(xRandomize, yRandomize);
+        if(playerTries < 1)
+        {
+            lostCanva.SetActive(true);
+            Time.timeScale = 0f;
+        }
 
      }
     IEnumerator ChangeTag()
     {
         while (true) 
         {
-            yield return new WaitForSeconds(Random.Range(1f,4f));
+            yield return new WaitForSeconds(Random.Range(4f,10f));
             int random = Random.Range(0, tags.Length - 1);
             CurrentTag = tags[random];
             for (int j = 0; j < tags.Length; j++) 
             {
-                UIfruits[j].SetActive(false);
+                UIfruits[j].GetComponent<SpriteRenderer>().enabled = false;
             }
-            UIfruits[random].SetActive(true);
+            UIfruits[random].GetComponent<SpriteRenderer>().enabled = true;
             
         }
 
@@ -60,18 +79,24 @@ public class GameManger : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(Random.Range(0.1f,2f));
-            int j = 6;
+            int j = Random.Range(10,20);
             for (int i = 0; i < j; i++)
             {
             float xRandomize = Random.Range(minRandomzier.position.x, maxRandomzier.position.x);
             float yRandomize = Random.Range(minRandomzier.position.y, maxRandomzier.position.y);
             Vector2 randomizer = new Vector2(xRandomize, yRandomize);
                 Instantiate(fruits[Random.Range(0, fruits.Length - 1)], randomizer, new Quaternion(0, 0, 0, 0));
-            yield return new WaitForSeconds(Random.Range(0.1f,2f));
+            yield return new WaitForSeconds(Random.Range(0.1f,1f));
 
             }
 
             currentTimer = delay;
         }
     }
+    public void restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        
+    }
+    
 }
