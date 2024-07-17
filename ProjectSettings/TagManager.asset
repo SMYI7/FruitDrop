@@ -9,6 +9,7 @@ TagManager:
   - Grape
   - Bomb
   - Orange
+  - GameManger
   layers:
   - Default
   - TransparentFX
