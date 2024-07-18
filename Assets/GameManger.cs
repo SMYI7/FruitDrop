@@ -25,11 +25,13 @@ public class GameManger : MonoBehaviour
     [SerializeField] private float delay;
     public float playerTries;
     [SerializeField]private float currentTimer;
-    
+    public AudioSource collected;
+    public AudioSource lost;
+
     void Start()
     {
         Time.timeScale = 1f;
-        StartCoroutine(ChangeTag());
+        ChangeTag();
         Instance = this;
         currentTimer = delay;
         StartCoroutine(SpawnFruit());
@@ -58,11 +60,9 @@ public class GameManger : MonoBehaviour
         }
 
      }
-    IEnumerator ChangeTag()
+    public void ChangeTag()
     {
-        while (true) 
-        {
-            yield return new WaitForSeconds(Random.Range(4f,10f));
+        
             int random = Random.Range(0, tags.Length - 1);
             CurrentTag = tags[random];
             for (int j = 0; j < tags.Length; j++) 
@@ -71,7 +71,7 @@ public class GameManger : MonoBehaviour
             }
             UIfruits[random].GetComponent<SpriteRenderer>().enabled = true;
             
-        }
+        
 
     }
     IEnumerator SpawnFruit()

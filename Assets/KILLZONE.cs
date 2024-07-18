@@ -15,6 +15,7 @@ public class KILLZONE : MonoBehaviour
             }
             else if (collision.CompareTag(GameManger.Instance.CurrentTag) && !collision.CompareTag("Ground") && !collision.CompareTag("Player"))
             {
+                GameManger.Instance.lost.Play();
                 GameManger.Instance.playerTries--;
                 Destroy(collision.gameObject);
             }

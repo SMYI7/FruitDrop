@@ -9,7 +9,7 @@ public class BasketScirpt : MonoBehaviour
     //[SerializeField]GameManger gameManger;
     [SerializeField] private float raduis;
     [SerializeField] private Vector3 offset;
-    [SerializeField] private AudioSource sfx;
+    
     void Start()
     {
         Controls input = new Controls();
@@ -32,11 +32,13 @@ public class BasketScirpt : MonoBehaviour
             if(hitInfo.CompareTag(GameManger.Instance.CurrentTag))
             {
                 Destroy(hitInfo.gameObject);
-                sfx.Play();
+                GameManger.Instance.collected.Play();
+                GameManger.Instance.ChangeTag();
                 GameManger.Instance.score += 10;
             }
             else if (!hitInfo.CompareTag(GameManger.Instance.CurrentTag) && !hitInfo.CompareTag("Ground") && !hitInfo.CompareTag("Player"))
             {
+                GameManger.Instance.lost.Play();
                 GameManger.Instance.playerTries--;
                 Destroy(hitInfo.gameObject);
             }
